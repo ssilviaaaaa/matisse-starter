@@ -297,13 +297,55 @@ function drawFigure(pose, w) {
 
 // ★★★★★★ 第 3 步 开始 / STEP 3 START：gouacheShader（把整个函数换成 Qwen 写的版本 / replace the whole function with Qwen's version）★★★★★★
 function gouacheShader() {
-  // 临时版本：什么都不改变的着色器 / placeholder: a shader that changes nothing
+  // 水粉画风格片元着色器：纸边抖动 + 纸张颗粒 + 四角压暗
   return `precision mediump float;
 varying vec2 vTexCoord;
 uniform sampler2D tex0;
 uniform float uTime;
+
 void main() {
-  gl_FragColor = texture2D(tex0, vTexCoord);
+  // 纸边抖动：用几组不同频率的正弦波叠加，让采样位置轻轻偏移
+  vec2 uv = vTexCoord;
+
+  // 低频缓慢抖动
+  float wobbleX = sin(uv.y * 8.0 + uTime * 0.7) * 0.0025;
+  float wobbleY = cos(uv.x * 7.0 + uTime * 0.9) * 0.0025;
+
+  // 中频抖动，模拟手工剪裁的不规则
+  wobbleX += sin(uv.y * 23.0 - uTime * 1.3) * 0.0012;
+  wobbleY += cos(uv.x * 19.0 + uTime * 1.1) * 0.0012;
+
+  // 高频细碎抖动
+  wobbleX += sin(uv.y * 47.0 + uTime * 2.1) * 0.0006;
+  wobbleY += cos(uv.x * 53.0 - uTime * 1.9) * 0.0006;
+
+  vec2 warpedUV = uv + vec2(wobbleX, wobbleY);
+
+  // 边缘轻微柔化：越靠近画面边缘，越往内收一点
+  vec2 edgeDist = min(warpedUV, 1.0 - warpedUV);
+  float edge = min(edgeDist.x, edgeDist.y);
+  float edgeFade = smoothstep(0.0, 0.03, edge);
+
+  // 主采样
+  vec4 color = texture2D(tex0, warpedUV);
+
+  // 纸张颗粒：用高频噪声叠加，让颜色有粗糙的纸面质感
+  float grain = fract(sin(dot(warpedUV * 800.0, vec2(12.9898, 78.233))) * 43758.5453);
+  // 颗粒强度在中间调更明显，亮部暗部略弱
+  float lum = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+  float grainAmount = mix(0.08, 0.04, abs(lum - 0.5) * 2.0);
+  color.rgb += (grain - 0.5) * grainAmount;
+
+  // 四角压暗：以中心为基准，越靠角越暗
+  vec2 centered = uv - 0.5;
+  float vignette = 1.0 - dot(centered, centered) * 0.9;
+  vignette = clamp(vignette, 0.0, 1.0);
+  color.rgb *= mix(0.75, 1.0, vignette);
+
+  // 边缘柔化处理
+  color.rgb *= mix(0.0, 1.0, edgeFade);
+
+  gl_FragColor = color;
 }`;
 }
 // ★★★★★★ 第 3 步 结束 / STEP 3 END ★★★★★★
