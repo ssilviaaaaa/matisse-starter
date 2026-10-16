@@ -246,21 +246,52 @@ function figureWidth(pose) {
 
 // ★★★★★★ 第 1 步 开始 / STEP 1 START：drawLimb（把整个函数换成 Qwen 写的版本 / replace the whole function with Qwen's version）★★★★★★
 function drawLimb(a, b, w) {
-  // 临时版本：一条细细的白线 / placeholder: a thin white line
   if (!isVisible(a) || !isVisible(b)) return;
-  stroke(255);
-  strokeWeight(2);
+  stroke(RED);
+  strokeWeight(w);
+  strokeCap(ROUND);
   line(a.x, a.y, b.x, b.y);
+  noStroke();
+  fill(RED);
+  circle(b.x, b.y, w * 1.1);
 }
 // ★★★★★★ 第 1 步 结束 / STEP 1 END ★★★★★★
 
 // ★★★★★★ 第 2 步 开始 / STEP 2 START：drawFigure（把整个函数换成 Qwen 写的版本 / replace the whole function with Qwen's version）★★★★★★
 function drawFigure(pose, w) {
-  // 临时版本：只画手臂 / placeholder: only the arms
+  let ls = pose[11];
+  let rs = pose[12];
+  let lh = pose[23];
+  let rh = pose[24];
+  let nose = pose[0];
+
+  noStroke();
+  fill(RED);
+
+  // 绘制躯干
+  if (isVisible(ls) && isVisible(rs) && isVisible(lh) && isVisible(rh)) {
+    quad(ls.x, ls.y, rs.x, rs.y, rh.x, rh.y, lh.x, lh.y);
+  }
+
+  // 绘制头部和脖子
+  if (isVisible(nose)) {
+    circle(nose.x, nose.y, w * 1.8);
+    if (isVisible(ls) && isVisible(rs)) {
+      drawLimb({ x: (ls.x + rs.x) / 2, y: (ls.y + rs.y) / 2, visibility: 1 }, nose, w * 0.8);
+    }
+  }
+
+  // 绘制手臂
   drawLimb(pose[11], pose[13], w);
-  drawLimb(pose[13], pose[15], w);
+  drawLimb(pose[13], pose[15], w * 0.8);
   drawLimb(pose[12], pose[14], w);
-  drawLimb(pose[14], pose[16], w);
+  drawLimb(pose[14], pose[16], w * 0.8);
+
+  // 绘制腿部
+  drawLimb(pose[23], pose[25], w * 1.2);
+  drawLimb(pose[25], pose[27], w);
+  drawLimb(pose[24], pose[26], w * 1.2);
+  drawLimb(pose[26], pose[28], w);
 }
 // ★★★★★★ 第 2 步 结束 / STEP 2 END ★★★★★★
 
