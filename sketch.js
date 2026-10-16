@@ -352,7 +352,33 @@ void main() {
 
 // ★★★★★★ 第 4 步 开始 / STEP 4 START：drawEchoes（把整个函数换成 Qwen 写的版本 / replace the whole function with Qwen's version）★★★★★★
 function drawEchoes(history) {
-  // 临时版本：还没有回声舞者 / placeholder: no echo dancers yet
+  // 4 个回声舞者，像马蒂斯画里围成一圈的舞者，晚一点模仿动作
+  const offsets = [-0.36, -0.18, 0.18, 0.36];
+
+  for (let k = 1; k <= 4; k++) {
+    // 每个舞者对应更早一点的姿态，越靠后的舞者延迟越多
+    let i = history.length - 1 - k * 8;
+    if (i < 0) {
+      continue;
+    }
+
+    let pose = history[i];
+
+    push();
+    // 把舞者挪到围圈的位置
+    translate(width / 2 + offsets[k - 1] * width, 0);
+
+    // 单数的舞者左右相反
+    if (k % 2 === 1) {
+      scale(-1, 1);
+    }
+
+    translate(-width / 2, 0);
+
+    // 回声舞者略小一点
+    drawFigure(pose, figureWidth(pose) * 0.8);
+    pop();
+  }
 }
 // ★★★★★★ 第 4 步 结束 / STEP 4 END ★★★★★★
 
