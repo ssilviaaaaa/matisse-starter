@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>舞蹈 · Dance — 马蒂斯</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- p5.js + p5.sound：先用国内镜像 npmmirror，打不开就自动换成 jsDelivr / China mirror first, then jsDelivr -->
+  <script src="https://registry.npmmirror.com/p5/1.11.10/files/lib/p5.min.js"></script>
+  <script>window.p5 || document.write('<script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/p5.min.js"><\/script>')</script>
+  <script src="https://registry.npmmirror.com/p5/1.11.10/files/lib/addons/p5.sound.min.js"></script>
+  <script>(window.p5 && window.p5.SoundFile) || document.write('<script src="https://cdn.jsdelivr.net/npm/p5@1.11.10/lib/addons/p5.sound.min.js"><\/script>')</script>
+  <script src="sketch.js"></script>
+</head>
+<body>
+  <div id="intro">
+    <div class="card">
+      <h1>舞蹈 · Dance</h1>
+      <p class="sub">致敬 亨利·马蒂斯《舞蹈》1910 · after Henri Matisse</p>
+      <ul>
+        <li>你的身体变成一个朱红色的剪纸舞者 · Your body becomes a red cut-paper dancer</li>
+        <li>四个“回声舞者”晚一点点跟着你跳 · Four echo dancers follow you, a moment later</li>
+        <li>手腕的高度弹出竖琴的音 · The height of your wrists plays a harp</li>
+        <li>双手举过头顶，和弦慢慢出现 · Raise both arms above your head for a soft chord</li>
+        <li><kbd>S</kbd> 保存 save · <kbd>V</kbd> 摄像头 camera · <kbd>K</kbd> 骨架 skeleton</li>
+      </ul>
+      <p class="tip">退后到摄像头能看到你的上半身（最好是全身）· Step back until the camera sees your upper body (full body is best)</p>
+      <button id="start">开始跳舞 · Start dancing</button>
+    </div>
+  </div>
+  <div id="status"></div>
+</body>
+</html>
