@@ -384,8 +384,10 @@ function drawEchoes(history) {
 
 // ★★★★★★ 第 5 步 开始 / STEP 5 START：wristToNote（把整个函数换成 Qwen 写的版本 / replace the whole function with Qwen's version）★★★★★★
 function wristToNote(y) {
-  // 临时版本：永远是同一个音 / placeholder: always the same note
-  return 67;
+  // 把手腕高度映射到五声音阶里的一个音：手越高，音越高
+  // y = 0 在最上面（最高音），y = height 在最下面（最低音）
+  let i = floor(map(y, height, 0, 0, HARP.length - 0.001, true));
+  return HARP[i];
 }
 // ★★★★★★ 第 5 步 结束 / STEP 5 END ★★★★★★
 
